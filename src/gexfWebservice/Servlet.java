@@ -136,6 +136,13 @@ public class Servlet extends HttpServlet {
 		}
     }
     
+    /** 
+     * this method returns a html table with the top $rank values for the closeness centrality metric
+     * 
+     * @param xml the whole XML metrics content, which is provided by server.getMetrics(...)
+     * @param rank
+     * @return html table
+     */
     public String extractCC(String xml, int rank){
     	/* get values */
     	ClosenessCentralityContentHandler ccc = new ClosenessCentralityContentHandler();
@@ -164,6 +171,13 @@ public class Servlet extends HttpServlet {
     	return ccc.printContent(rank);
     }
     
+    /** 
+     * this method returns a html table with the top $rank values for the betweenness centrality metric
+     * 
+     * @param xml the whole XML metrics content, which is provided by server.getMetrics(...)
+     * @param rank
+     * @return html table
+     */
     public String extractBC(String xml, int rank){
     	/* get values */
     	BetweennessCentralityContentHandler bcc = new BetweennessCentralityContentHandler();
@@ -192,6 +206,13 @@ public class Servlet extends HttpServlet {
     	return bcc.printContent(rank);
     }
     
+    /** 
+     * this method returns a html table with the top $rank values for degree centrality metric
+     * 
+     * @param xml the whole XML metrics content, which is provided by server.getMetrics(...)
+     * @param rank
+     * @return html table
+     */
     public String extractDC(String xml, int rank){
     	
     	return "TO DO";
@@ -244,7 +265,7 @@ public class Servlet extends HttpServlet {
 			getSHA	= Integer.parseInt(request.getParameter("getsha"));
 		
 		/* execute some stuff, if it is a correct request */
-		if(request.getParameter("url") != null){
+		if(request.getParameter("url") != null && request.getParameter("id") == null){
 			String hashName = hashCodeSHA256(filename);
 			String hashPath	= APACHE_PATH + "hash/"+hashName+".gexf";
 			doesFileExist(hashPath, filename); 
@@ -278,6 +299,39 @@ public class Servlet extends HttpServlet {
 			}else if(getDensity == -1 && getNodesAndEdges == -1 && getSHA != -1){
 				// get the SHA hash of the graph-file
 				out.println(hashName);
+			}
+		}else if(request.getParameter("url") == null && request.getParameter("id") != null){
+			String hashPath	= APACHE_PATH + "hash/"+request.getParameter("id")+".gexf"; 
+			
+			if(rank != -1 && metric != null){
+				String result = server.getMetrics(hashPath);	// ask the server for the needed XML code
+				
+				/* there was a metric and a rank in the request */
+				switch(metric){
+				case "all":
+					out.println(result); // return the whole XML-file
+					break;
+				case "cc":
+					out.println(extractCC(result, rank));
+					break;
+				case "bc":
+					out.println(extractBC(result, rank));
+					break;
+				case "dc":
+					out.println(extractDC(result, rank));
+					break;
+				}
+			}else if(getDensity == -1 && getNodesAndEdges != -1){
+				// get the #nodes and the #edges of the graph
+				String nodesAndEdges = server.getNodesAndEdges(hashPath);
+				out.println(nodesAndEdges);
+			}else if(getDensity != -1 && getNodesAndEdges == -1){
+				// get the density of the graph
+				Double density = server.getDensity(hashPath);
+				out.println(density);
+			}else if(getDensity == -1 && getNodesAndEdges == -1 && getSHA != -1){
+				// get the SHA hash of the graph-file
+				out.println(request.getParameter("id"));
 			}
 		}else{
 			response.setContentType("text/html");
