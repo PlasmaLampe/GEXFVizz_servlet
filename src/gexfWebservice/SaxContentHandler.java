@@ -173,7 +173,7 @@ class ClosenessCentralityContentHandler extends SaxContentHandler{
 	    	tempNode.setLabel(currentValue);
 	    }
 	    if (localName.equals("value") && parseHere == true) {
-	    	double myDouble = Math.round( Double.parseDouble(currentValue) * 100. ) / 100;
+	    	double myDouble = Double.parseDouble(currentValue);
 	    	tempNode.setValue(myDouble);
 	    }
 	    
@@ -215,7 +215,7 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 	    	tempNode.setLabel(currentValue);
 	    }
 	    if (localName.equals("value") && parseHere == true) {
-	    	double myDouble = Math.round( Double.parseDouble(currentValue) * 100. ) / 100;
+	    	double myDouble = Double.parseDouble(currentValue);
 	    	tempNode.setValue(myDouble);
 	    }
 	    
