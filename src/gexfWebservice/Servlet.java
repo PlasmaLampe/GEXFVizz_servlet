@@ -31,7 +31,8 @@ import org.xml.sax.helpers.XMLReaderFactory;
 @WebServlet("/Servlet")
 public class Servlet extends HttpServlet {
 	private final String APACHE_PATH = "/var/www/";
-	
+	private static String lastFileContent = "";
+	private static String lastHashValue = "";
 	private static final long serialVersionUID = 1L;
        
     /**
@@ -39,7 +40,10 @@ public class Servlet extends HttpServlet {
      */
     public Servlet() {
         super();
-        // TODO Auto-generated constructor stub
+        
+		if (System.getSecurityManager() == null) {
+			System.setSecurityManager(new RMISecurityManager());
+		} 
     }
     
     /**
@@ -75,31 +79,39 @@ public class Servlet extends HttpServlet {
      * @return the SHA256 hash
      */
     private String hashCodeSHA256(String path){
-    	/* note: the actual hashing code was taken from
-    	 * http://www.mkyong.com/java/java-sha-hashing-example/
-    	 */
     	String content = getContent(path);
-    	 
-        MessageDigest md = null;
-		try {
-			md = MessageDigest.getInstance("SHA-256");
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        md.update(content.getBytes());
- 
-        byte byteData[] = md.digest();
- 
-        //convert the byte to hex format method 1
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < byteData.length; i++) {
-         sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
-        }
- 
-        //System.out.println("Hex format : " + sb.toString());
     	
-    	return sb.toString();
+    	if(content.equals(lastFileContent)){ // shortcut, maybe we know the output already ;-)
+    		return lastHashValue;
+    	}else{
+    		/* else -> hash the content
+    		 * note: the actual hashing code was taken from
+    		 * http://www.mkyong.com/java/java-sha-hashing-example/
+    		 */
+    		MessageDigest md = null;
+    		try {
+    			md = MessageDigest.getInstance("SHA-256");
+    		} catch (NoSuchAlgorithmException e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    		md.update(content.getBytes());
+
+    		byte byteData[] = md.digest();
+
+    		//convert the byte to hex format method 1
+    		StringBuffer sb = new StringBuffer();
+    		for (int i = 0; i < byteData.length; i++) {
+    			sb.append(Integer.toString((byteData[i] & 0xff) + 0x100, 16).substring(1));
+    		}
+
+    		// save shortcut values
+    		lastFileContent = content;
+    		lastHashValue = sb.toString();
+
+    		// return hash value
+    		return sb.toString();
+    	}
     }
     
     /**
@@ -223,9 +235,6 @@ public class Servlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ServerInterface server = null;
-		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new RMISecurityManager());
-		} 
 		
 		try {
 			Registry reg = LocateRegistry.getRegistry();
@@ -265,7 +274,7 @@ public class Servlet extends HttpServlet {
 			getSHA	= Integer.parseInt(request.getParameter("getsha"));
 		
 		/* execute some stuff, if it is a correct request */
-		if(request.getParameter("url") != null && request.getParameter("id") == null){
+		if(request.getParameter("url") != null && request.getParameter("id") == null){		
 			String hashName = hashCodeSHA256(filename);
 			String hashPath	= APACHE_PATH + "hash/"+hashName+".gexf";
 			doesFileExist(hashPath, filename); 
