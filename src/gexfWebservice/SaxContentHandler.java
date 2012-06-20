@@ -224,3 +224,45 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 	    }
 	}
 }
+
+class DegreeCentralityContentHandler extends SaxContentHandler{
+	/* startElement */
+	public void startElement(String uri, String localName, String qName,
+		      Attributes atts) throws SAXException {
+		
+	    if (localName.equals("degreeCentrality")) {
+	    	parseHere = true;
+	    }
+	    
+	    if(localName.equals("ranks") && parseHere == true){
+	    	tempNode = new SaxNode();
+	    }
+	}
+	
+	/* endElement */
+	public void endElement(String uri, String localName, String qName)
+			throws SAXException {
+		
+	    if (localName.equals("degreeCentrality")) {
+	    	parseHere = false;
+	    }
+	    
+	    if (localName.equals("id") && parseHere == true) {
+	    	tempNode.setId(Integer.parseInt(currentValue));
+	    }
+	    if (localName.equals("place") && parseHere == true) {
+	    	tempNode.setPlace(Integer.parseInt(currentValue));
+	    }
+	    if (localName.equals("label") && parseHere == true) {
+	    	tempNode.setLabel(currentValue);
+	    }
+	    if (localName.equals("value") && parseHere == true) {
+	    	double myDouble = Double.parseDouble(currentValue);
+	    	tempNode.setValue(myDouble);
+	    }
+	    
+	    if (localName.equals("ranks") && parseHere == true) {
+	    	list.add(tempNode);
+	    }
+	}
+}

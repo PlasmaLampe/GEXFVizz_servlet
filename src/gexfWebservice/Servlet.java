@@ -226,8 +226,31 @@ public class Servlet extends HttpServlet {
      * @return html table
      */
     public String extractDC(String xml, int rank){
+    	/* get values */
+    	DegreeCentralityContentHandler dcc = new DegreeCentralityContentHandler();
+    	XMLReader xmlReader = null;
     	
-    	return "TO DO";
+		try {
+			xmlReader = XMLReaderFactory.createXMLReader();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	    InputSource inputSource = new InputSource(new StringReader(xml));
+	    xmlReader.setContentHandler(dcc);
+	    
+	    try {
+			xmlReader.parse(inputSource);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+    	return dcc.printContent(rank);
     }
     
 	/**
@@ -283,6 +306,13 @@ public class Servlet extends HttpServlet {
 				String result = server.getMetrics(hashPath);	// ask the server for the needed XML code
 				
 				/* there was a metric and a rank in the request */
+				// check max values first
+				String[] nodesAndEdges = server.getNodesAndEdges(hashPath).split("#");
+				int maxRank = Integer.parseInt(nodesAndEdges[0]);
+				if(maxRank < rank){
+					rank = maxRank;
+				}
+				// now, it's safe to proceed ...
 				switch(metric){
 				case "all":
 					out.println(result); // return the whole XML-file
