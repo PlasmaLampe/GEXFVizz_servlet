@@ -153,12 +153,10 @@ public class Servlet extends HttpServlet {
      * 
      * @param xml the whole XML metrics content, which is provided by server.getMetrics(...)
      * @param rank
+     * @param chandler the needed content handler to parse the XML file
      * @return html table
      */
-    public String extractCC(String xml, int rank){
-    	/* get values */
-    	ClosenessCentralityContentHandler ccc = new ClosenessCentralityContentHandler();
-    	
+    public String extractMetric(String xml, int rank, SaxContentHandler chandler){
     	XMLReader xmlReader = null;
     	
 		try {
@@ -168,7 +166,7 @@ public class Servlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	    InputSource inputSource = new InputSource(new StringReader(xml));
-	    xmlReader.setContentHandler(ccc);
+	    xmlReader.setContentHandler(chandler);
 	    
 	    try {
 			xmlReader.parse(inputSource);
@@ -180,77 +178,7 @@ public class Servlet extends HttpServlet {
 			e.printStackTrace();
 		}
 	    
-    	return ccc.printContent(rank);
-    }
-    
-    /** 
-     * this method returns a html table with the top $rank values for the betweenness centrality metric
-     * 
-     * @param xml the whole XML metrics content, which is provided by server.getMetrics(...)
-     * @param rank
-     * @return html table
-     */
-    public String extractBC(String xml, int rank){
-    	/* get values */
-    	BetweennessCentralityContentHandler bcc = new BetweennessCentralityContentHandler();
-    	XMLReader xmlReader = null;
-    	
-		try {
-			xmlReader = XMLReaderFactory.createXMLReader();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	    InputSource inputSource = new InputSource(new StringReader(xml));
-	    xmlReader.setContentHandler(bcc);
-	    
-	    try {
-			xmlReader.parse(inputSource);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-    	return bcc.printContent(rank);
-    }
-    
-    /** 
-     * this method returns a html table with the top $rank values for degree centrality metric
-     * 
-     * @param xml the whole XML metrics content, which is provided by server.getMetrics(...)
-     * @param rank
-     * @return html table
-     */
-    public String extractDC(String xml, int rank){
-    	/* get values */
-    	DegreeCentralityContentHandler dcc = new DegreeCentralityContentHandler();
-    	XMLReader xmlReader = null;
-    	
-		try {
-			xmlReader = XMLReaderFactory.createXMLReader();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	    InputSource inputSource = new InputSource(new StringReader(xml));
-	    xmlReader.setContentHandler(dcc);
-	    
-	    try {
-			xmlReader.parse(inputSource);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	    
-    	return dcc.printContent(rank);
+    	return chandler.printContent(rank);
     }
     
 	/**
@@ -297,82 +225,62 @@ public class Servlet extends HttpServlet {
 			getSHA	= Integer.parseInt(request.getParameter("getsha"));
 		
 		/* execute some stuff, if it is a correct request */
+		String hashPath = "";
+		String hashName = "";
+		
 		if(request.getParameter("url") != null && request.getParameter("id") == null){		
-			String hashName = hashCodeSHA256(filename);
-			String hashPath	= APACHE_PATH + "hash/"+hashName+".gexf";
+			hashName = hashCodeSHA256(filename);
+			hashPath = APACHE_PATH + "hash/"+hashName+".gexf";
 			doesFileExist(hashPath, filename); 
-			
-			if(rank != -1 && metric != null){
-				String result = server.getMetrics(hashPath);	// ask the server for the needed XML code
-				
-				/* there was a metric and a rank in the request */
-				// check max values first
-				String[] nodesAndEdges = server.getNodesAndEdges(hashPath).split("#");
-				int maxRank = Integer.parseInt(nodesAndEdges[0]);
-				if(maxRank < rank){
-					rank = maxRank;
-				}
-				// now, it's safe to proceed ...
-				switch(metric){
-				case "all":
-					out.println(result); // return the whole XML-file
-					break;
-				case "cc":
-					out.println(extractCC(result, rank));
-					break;
-				case "bc":
-					out.println(extractBC(result, rank));
-					break;
-				case "dc":
-					out.println(extractDC(result, rank));
-					break;
-				}
-			}else if(getDensity == -1 && getNodesAndEdges != -1){
-				// get the #nodes and the #edges of the graph
-				String nodesAndEdges = server.getNodesAndEdges(hashPath);
-				out.println(nodesAndEdges);
-			}else if(getDensity != -1 && getNodesAndEdges == -1){
-				// get the density of the graph
-				Double density = server.getDensity(hashPath);
-				out.println(density);
-			}else if(getDensity == -1 && getNodesAndEdges == -1 && getSHA != -1){
-				// get the SHA hash of the graph-file
-				out.println(hashName);
-			}
-		}else if(request.getParameter("url") == null && request.getParameter("id") != null){
-			String hashPath	= APACHE_PATH + "hash/"+request.getParameter("id")+".gexf"; 
-			
-			if(rank != -1 && metric != null){
-				String result = server.getMetrics(hashPath);	// ask the server for the needed XML code
-				
-				/* there was a metric and a rank in the request */
-				switch(metric){
-				case "all":
-					out.println(result); // return the whole XML-file
-					break;
-				case "cc":
-					out.println(extractCC(result, rank));
-					break;
-				case "bc":
-					out.println(extractBC(result, rank));
-					break;
-				case "dc":
-					out.println(extractDC(result, rank));
-					break;
-				}
-			}else if(getDensity == -1 && getNodesAndEdges != -1){
-				// get the #nodes and the #edges of the graph
-				String nodesAndEdges = server.getNodesAndEdges(hashPath);
-				out.println(nodesAndEdges);
-			}else if(getDensity != -1 && getNodesAndEdges == -1){
-				// get the density of the graph
-				Double density = server.getDensity(hashPath);
-				out.println(density);
-			}else if(getDensity == -1 && getNodesAndEdges == -1 && getSHA != -1){
-				// get the SHA hash of the graph-file
-				out.println(request.getParameter("id"));
-			}
 		}else{
+			hashPath = APACHE_PATH + "hash/"+request.getParameter("id")+".gexf"; 
+		}
+			
+		if(rank != -1 && metric != null && 
+				(request.getParameter("url") != null || request.getParameter("id") != null)){
+			String result = server.getMetrics(hashPath);	// ask the server for the needed XML code
+
+			/* there was a metric and a rank in the request */
+			// check max values first
+			String[] nodesAndEdges = server.getNodesAndEdges(hashPath).split("#");
+			int maxRank = Integer.parseInt(nodesAndEdges[0]);
+			if(maxRank < rank){
+				rank = maxRank;
+			}
+			// now, it's safe to proceed ...
+			switch(metric){
+			case "all":
+				out.println(result); // return the whole XML-file
+				break;
+			case "cc":
+				ClosenessCentralityContentHandler ccc = new ClosenessCentralityContentHandler();
+				out.println(extractMetric(result, rank, ccc));
+				break;
+			case "bc":
+				BetweennessCentralityContentHandler bcc = new BetweennessCentralityContentHandler();
+				out.println(extractMetric(result, rank, bcc));
+				break;
+			case "dc":
+				DegreeCentralityContentHandler dcc = new DegreeCentralityContentHandler();
+				out.println(extractMetric(result, rank, dcc));
+				break;
+			}
+		}else if(getDensity == -1 && getNodesAndEdges != -1 && 
+				(request.getParameter("url") != null || request.getParameter("id") != null)){
+			// get the #nodes and the #edges of the graph
+			String nodesAndEdges = server.getNodesAndEdges(hashPath);
+			out.println(nodesAndEdges);
+		}else if(getDensity != -1 && getNodesAndEdges == -1 && 
+				(request.getParameter("url") != null || request.getParameter("id") != null)){
+			// get the density of the graph
+			Double density = server.getDensity(hashPath);
+			out.println(density);
+		}else if(getDensity == -1 && getNodesAndEdges == -1 && getSHA != -1 && 
+				(request.getParameter("url") != null || request.getParameter("id") != null)){
+			// get the SHA hash of the graph-file
+			out.println(hashName);
+		}else{
+			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
 					"try: /GEXFServer/Servlet?url=data/small.gexf&metric=cc&rank=3 <br>" +
