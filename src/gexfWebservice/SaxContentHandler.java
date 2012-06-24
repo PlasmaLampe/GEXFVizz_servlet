@@ -8,7 +8,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 class SaxNode{
-	int id;
+	String id;
 	String label;
 	double value;
 	int place;
@@ -16,11 +16,11 @@ class SaxNode{
 	SaxNode(){
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -164,7 +164,7 @@ class ClosenessCentralityContentHandler extends SaxContentHandler{
 	    }
 	    
 	    if (localName.equals("id") && parseHere == true) {
-	    	tempNode.setId(Integer.parseInt(currentValue));
+	    	tempNode.setId(currentValue);
 	    }
 	    if (localName.equals("place") && parseHere == true) {
 	    	tempNode.setPlace(Integer.parseInt(currentValue));
@@ -206,7 +206,7 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 	    }
 	    
 	    if (localName.equals("id") && parseHere == true) {
-	    	tempNode.setId(Integer.parseInt(currentValue));
+	    	tempNode.setId(currentValue);
 	    }
 	    if (localName.equals("place") && parseHere == true) {
 	    	tempNode.setPlace(Integer.parseInt(currentValue));
@@ -248,7 +248,7 @@ class DegreeCentralityContentHandler extends SaxContentHandler{
 	    }
 	    
 	    if (localName.equals("id") && parseHere == true) {
-	    	tempNode.setId(Integer.parseInt(currentValue));
+	    	tempNode.setId(currentValue);
 	    }
 	    if (localName.equals("place") && parseHere == true) {
 	    	tempNode.setPlace(Integer.parseInt(currentValue));
