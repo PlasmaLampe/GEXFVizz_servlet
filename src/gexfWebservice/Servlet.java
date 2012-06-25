@@ -209,8 +209,10 @@ public class Servlet extends HttpServlet {
 		int rank = -1;
 		if(request.getParameter("rank") != null)
 			rank	= Integer.parseInt(request.getParameter("rank"));
-
+		
 		String metric	= request.getParameter("metric");
+		String eventid	= request.getParameter("eventid");
+		String graphtype	= request.getParameter("graphtype");
 		
 		int getNodesAndEdges = -1;
 		if(request.getParameter("getnodesandedges") != null)
@@ -228,7 +230,20 @@ public class Servlet extends HttpServlet {
 		String hashPath = "";
 		String hashName = "";
 		
-		if(request.getParameter("url") != null && request.getParameter("id") == null){		
+		/* user is going to create a file */
+		if(eventid != null && graphtype != null){
+			// load the other parameter 
+			String eventseriesid = request.getParameter("eventseriesid");
+			String syear	= request.getParameter("syear");
+			String eyear	= request.getParameter("eyear");
+			
+			// now, let's start
+			String filepath = server.getGraphPath(graphtype, eventid, eventseriesid, syear, eyear);
+			out.println(filepath);
+		}
+		
+		/* user opened a file */
+		else if(request.getParameter("url") != null && request.getParameter("id") == null){		
 			hashName = hashCodeSHA256(filename);
 			hashPath = APACHE_PATH + "hash/"+hashName+".gexf";
 			doesFileExist(hashPath, filename); 
@@ -279,7 +294,7 @@ public class Servlet extends HttpServlet {
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else{
+		}else if(eventid == null){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
