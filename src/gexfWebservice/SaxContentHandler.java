@@ -130,7 +130,7 @@ public class SaxContentHandler implements ContentHandler {
 	}
 	
 	public String printContent(int upToRank){
-		String output = "<table>\n\t<tr><th>name</th><th>value</th></tr>\n";
+		String output = "<table class=\"zebra-striped\">\n\t<tr><th>name</th><th>value</th></tr>\n";
 		
 		for(int i = 0; i < upToRank; i++){
 			output += "\t<tr><td>"+list.get(i).label+"</td><td>"+list.get(i).value+"</td></tr>\n";

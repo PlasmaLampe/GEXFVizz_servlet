@@ -212,6 +212,7 @@ public class Servlet extends HttpServlet {
 		
 		String metric	= request.getParameter("metric");
 		String eventid	= request.getParameter("eventid");
+		String eventseriesid = request.getParameter("eventseriesid");
 		String graphtype	= request.getParameter("graphtype");
 		
 		int getNodesAndEdges = -1;
@@ -231,9 +232,8 @@ public class Servlet extends HttpServlet {
 		String hashName = "";
 		
 		/* user is going to create a file */
-		if(eventid != null && graphtype != null){
+		if((eventid != null || eventseriesid != null) && graphtype != null){
 			// load the other parameter 
-			String eventseriesid = request.getParameter("eventseriesid");
 			String syear	= request.getParameter("syear");
 			String eyear	= request.getParameter("eyear");
 			
@@ -294,7 +294,7 @@ public class Servlet extends HttpServlet {
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else if(eventid == null){
+		}else if(eventid == null && eventseriesid == null){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
