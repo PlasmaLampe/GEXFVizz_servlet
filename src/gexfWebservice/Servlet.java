@@ -211,6 +211,7 @@ public class Servlet extends HttpServlet {
 			rank	= Integer.parseInt(request.getParameter("rank"));
 		
 		String metric	= request.getParameter("metric");
+		String circos	= request.getParameter("circos");
 		String eventid	= request.getParameter("eventid");
 		String eventseriesid = request.getParameter("eventseriesid");
 		String graphtype	= request.getParameter("graphtype");
@@ -231,7 +232,18 @@ public class Servlet extends HttpServlet {
 		String hashPath = "";
 		String hashName = "";
 		
-		/* user is going to create a file */
+		/* user is going to create a circos file */
+		if((eventid != null || eventseriesid != null) && graphtype != null && circos != null){
+			// load the other parameter 
+			String syear	= request.getParameter("syear");
+			String eyear	= request.getParameter("eyear");
+			
+			// now, let's start
+			String filepath = server.getGraphPath(graphtype, eventid, eventseriesid, syear, eyear);
+			out.println(filepath);
+		}
+		
+		/* user is going to create a gexf file */
 		if((eventid != null || eventseriesid != null) && graphtype != null){
 			// load the other parameter 
 			String syear	= request.getParameter("syear");

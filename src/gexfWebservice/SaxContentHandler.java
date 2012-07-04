@@ -8,12 +8,27 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 class SaxNode{
-	String id;
-	String label;
-	double value;
-	int place;
+	private String id;
+	private String label;
+	private double value;
+	private double svalue;
+	private int place;
 	
 	SaxNode(){
+	}
+
+	/**
+	 * @return the svalue
+	 */
+	public double getSvalue() {
+		return svalue;
+	}
+
+	/**
+	 * @param svalue the svalue to set
+	 */
+	public void setSvalue(double svalue) {
+		this.svalue = svalue;
 	}
 
 	public String getId() {
@@ -47,8 +62,6 @@ class SaxNode{
 	public void setPlace(int place) {
 		this.place = place;
 	}
-	
-	
 	
 }
 
@@ -130,10 +143,11 @@ public class SaxContentHandler implements ContentHandler {
 	}
 	
 	public String printContent(int upToRank){
-		String output = "<table class=\"zebra-striped\">\n\t<tr><th>name</th><th>value</th></tr>\n";
+		String output = "<table class=\"zebra-striped\">\n\t<tr><th>name</th><th>standardized value</th><th>value</th></tr>\n";
 		
 		for(int i = 0; i < upToRank; i++){
-			output += "\t<tr><td>"+list.get(i).label+"</td><td>"+list.get(i).value+"</td></tr>\n";
+			output += "\t<tr><td>"+list.get(i).getLabel()+"</td>" +
+					"<td>"+list.get(i).getSvalue()+"</td><td>"+list.get(i).getValue()+"</td></tr>\n";
 		}
 		output += "</table>";
 		
@@ -162,7 +176,6 @@ class ClosenessCentralityContentHandler extends SaxContentHandler{
 	    if (localName.equals("closenessCentrality")) {
 	    	parseHere = false;
 	    }
-	    
 	    if (localName.equals("id") && parseHere == true) {
 	    	tempNode.setId(currentValue);
 	    }
@@ -176,7 +189,10 @@ class ClosenessCentralityContentHandler extends SaxContentHandler{
 	    	double myDouble = Double.parseDouble(currentValue);
 	    	tempNode.setValue(myDouble);
 	    }
-	    
+	    if (localName.equals("svalue") && parseHere == true) {
+	    	double myDouble = Double.parseDouble(currentValue);
+	    	tempNode.setSvalue(myDouble);
+	    }
 	    if (localName.equals("ranks") && parseHere == true) {
 	    	list.add(tempNode);
 	    }
@@ -191,7 +207,6 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 	    if (localName.equals("betweennessCentrality")) {
 	    	parseHere = true;
 	    }
-	    
 	    if(localName.equals("ranks") && parseHere == true){
 	    	tempNode = new SaxNode();
 	    }
@@ -204,7 +219,6 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 	    if (localName.equals("betweennessCentrality")) {
 	    	parseHere = false;
 	    }
-	    
 	    if (localName.equals("id") && parseHere == true) {
 	    	tempNode.setId(currentValue);
 	    }
@@ -218,7 +232,10 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 	    	double myDouble = Double.parseDouble(currentValue);
 	    	tempNode.setValue(myDouble);
 	    }
-	    
+	    if (localName.equals("svalue") && parseHere == true) {
+	    	double myDouble = Double.parseDouble(currentValue);
+	    	tempNode.setSvalue(myDouble);
+	    }
 	    if (localName.equals("ranks") && parseHere == true) {
 	    	list.add(tempNode);
 	    }
@@ -246,7 +263,6 @@ class DegreeCentralityContentHandler extends SaxContentHandler{
 	    if (localName.equals("degreeCentrality")) {
 	    	parseHere = false;
 	    }
-	    
 	    if (localName.equals("id") && parseHere == true) {
 	    	tempNode.setId(currentValue);
 	    }
@@ -259,8 +275,11 @@ class DegreeCentralityContentHandler extends SaxContentHandler{
 	    if (localName.equals("value") && parseHere == true) {
 	    	double myDouble = Double.parseDouble(currentValue);
 	    	tempNode.setValue(myDouble);
+	    }  
+	    if (localName.equals("svalue") && parseHere == true) {
+	    	double myDouble = Double.parseDouble(currentValue);
+	    	tempNode.setSvalue(myDouble);
 	    }
-	    
 	    if (localName.equals("ranks") && parseHere == true) {
 	    	list.add(tempNode);
 	    }
