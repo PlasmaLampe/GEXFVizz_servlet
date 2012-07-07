@@ -237,14 +237,11 @@ public class Servlet extends HttpServlet {
 		String hashName = "";
 		
 		/* user is going to create a circos file */
-		if((eventid != null || eventseriesid != null) && graphtype != null && circos != false){
-			// load the other parameter 
-			String syear	= request.getParameter("syear");
-			String eyear	= request.getParameter("eyear");
+		if(request.getParameter("url") != null && metric != null && circos != false){
 			
 			// now, let's start
-			String filepath = server.getGraphPath(graphtype, eventid, eventseriesid, syear, eyear, circos);
-			out.println("created circos file");
+			String filepath = server.getCircosPath(filename, metric);
+			out.println(filepath);
 		}
 		
 		/* user is going to create a gexf file */
@@ -254,7 +251,7 @@ public class Servlet extends HttpServlet {
 			String eyear	= request.getParameter("eyear");
 			
 			// now, let's start
-			String filepath = server.getGraphPath(graphtype, eventid, eventseriesid, syear, eyear, circos);
+			String filepath = server.getGraphPath(graphtype, eventid, eventseriesid, syear, eyear);
 			out.println(filepath);
 		}
 		
