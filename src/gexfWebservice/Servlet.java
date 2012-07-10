@@ -237,15 +237,15 @@ public class Servlet extends HttpServlet {
 		String hashName = "";
 		
 		/* user is going to create a circos file */
-		if(request.getParameter("url") != null && metric != null && circos != false){
+		if(request.getParameter("url") != null && metric != null && rank != -1 && circos != false){
 			
 			// now, let's start
-			String filepath = server.getCircosPath(filename, metric);
+			String filepath = server.getCircosPath(filename, metric, rank);
 			out.println(filepath);
 		}
 		
 		/* user is going to create a gexf file */
-		if((eventid != null || eventseriesid != null) && graphtype != null && circos == false){
+		else if((eventid != null || eventseriesid != null) && graphtype != null && circos == false){
 			// load the other parameter 
 			String syear	= request.getParameter("syear");
 			String eyear	= request.getParameter("eyear");
@@ -264,7 +264,7 @@ public class Servlet extends HttpServlet {
 			hashPath = APACHE_PATH + "hash/"+request.getParameter("id")+".gexf"; 
 		}
 			
-		if(rank != -1 && metric != null && 
+		if(rank != -1 && metric != null && circos == false && 
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			String result = server.getMetrics(hashPath);	// ask the server for the needed XML code
 
@@ -307,7 +307,7 @@ public class Servlet extends HttpServlet {
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else if(eventid == null && eventseriesid == null){
+		}else if(eventid == null && eventseriesid == null && circos == false){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
