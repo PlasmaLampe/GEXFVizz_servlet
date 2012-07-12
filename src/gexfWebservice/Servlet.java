@@ -216,6 +216,10 @@ public class Servlet extends HttpServlet {
 		if(request.getParameter("circos") != null)
 			circos	= Boolean.parseBoolean(request.getParameter("circos"));
 		
+		boolean getBCEdges = false;
+		if(request.getParameter("bcedges") != null)
+			getBCEdges	= Boolean.parseBoolean(request.getParameter("bcedges"));
+		
 		String eventid	= request.getParameter("eventid");
 		String eventseriesid = request.getParameter("eventseriesid");
 		String graphtype	= request.getParameter("graphtype");
@@ -263,8 +267,14 @@ public class Servlet extends HttpServlet {
 		}else{
 			hashPath = APACHE_PATH + "hash/"+request.getParameter("id")+".gexf"; 
 		}
-			
-		if(rank != -1 && metric != null && circos == false && 
+		
+		if((eventid != null || eventseriesid != null) && getBCEdges && rank != -1){
+			String syear	= request.getParameter("syear");
+			String eyear	= request.getParameter("eyear");
+			String result = server.getBCEdges(eventid, eventseriesid, syear, eyear, rank);	// ask the server for the needed XML code
+			out.println(result);
+		}
+		else if(rank != -1 && metric != null && circos == false && 
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			String result = server.getMetrics(hashPath);	// ask the server for the needed XML code
 
