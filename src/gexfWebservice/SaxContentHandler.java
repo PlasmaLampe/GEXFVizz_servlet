@@ -66,6 +66,8 @@ class SaxNode{
 }
 
 public class SaxContentHandler implements ContentHandler {
+	protected String snatype;
+	protected String filename;
 	protected ArrayList<SaxNode> list = new ArrayList<SaxNode>();
 	protected SaxNode tempNode;
 	protected String currentValue;
@@ -146,7 +148,9 @@ public class SaxContentHandler implements ContentHandler {
 		String output = "<table class=\"zebra-striped\">\n\t<tr><th>name</th><th>standardized value</th><th>value</th></tr>\n";
 		
 		for(int i = 0; i < upToRank; i++){
-			output += "\t<tr><td>"+list.get(i).getLabel()+"</td>" +
+			String labellink = "<a href=\""+ Settings.TomcatURLToServlet +"id=" + filename + "&item=" +
+					"" + list.get(i).getId() +"&snatype="+ snatype +"\">"+list.get(i).getLabel()+"</a>";
+			output += "\t<tr><td>"+ labellink +"</td>" +
 					"<td>"+list.get(i).getSvalue()+"</td><td>"+list.get(i).getValue()+"</td></tr>\n";
 		}
 		output += "</table>";
@@ -156,6 +160,11 @@ public class SaxContentHandler implements ContentHandler {
 }
 
 class ClosenessCentralityContentHandler extends SaxContentHandler{
+	
+	public ClosenessCentralityContentHandler(){
+		snatype = "cc";
+	}
+	
 	/* startElement */
 	public void startElement(String uri, String localName, String qName,
 		      Attributes atts) throws SAXException {
@@ -175,6 +184,10 @@ class ClosenessCentralityContentHandler extends SaxContentHandler{
 		
 	    if (localName.equals("closenessCentrality")) {
 	    	parseHere = false;
+	    }
+	    if (localName.equals("filename")) {
+	    	String clean = currentValue.substring(currentValue.lastIndexOf("/")+1,currentValue.lastIndexOf("."));
+	    	filename = clean;
 	    }
 	    if (localName.equals("id") && parseHere == true) {
 	    	tempNode.setId(currentValue);
@@ -200,6 +213,11 @@ class ClosenessCentralityContentHandler extends SaxContentHandler{
 }
 
 class BetweennessCentralityContentHandler extends SaxContentHandler{
+	
+	public BetweennessCentralityContentHandler(){
+		snatype = "bc";
+	}
+	
 	/* startElement */
 	public void startElement(String uri, String localName, String qName,
 		      Attributes atts) throws SAXException {
@@ -218,6 +236,10 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 		
 	    if (localName.equals("betweennessCentrality")) {
 	    	parseHere = false;
+	    }
+	    if (localName.equals("filename")) {
+	    	String clean = currentValue.substring(currentValue.lastIndexOf("/")+1,currentValue.lastIndexOf("."));
+	    	filename = clean;
 	    }
 	    if (localName.equals("id") && parseHere == true) {
 	    	tempNode.setId(currentValue);
@@ -243,6 +265,11 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 }
 
 class DegreeCentralityContentHandler extends SaxContentHandler{
+	
+	public DegreeCentralityContentHandler() {
+		snatype = "dc";
+	}
+	
 	/* startElement */
 	public void startElement(String uri, String localName, String qName,
 		      Attributes atts) throws SAXException {
@@ -262,6 +289,10 @@ class DegreeCentralityContentHandler extends SaxContentHandler{
 		
 	    if (localName.equals("degreeCentrality")) {
 	    	parseHere = false;
+	    }
+	    if (localName.equals("filename")) {
+	    	String clean = currentValue.substring(currentValue.lastIndexOf("/")+1,currentValue.lastIndexOf("."));
+	    	filename = clean;
 	    }
 	    if (localName.equals("id") && parseHere == true) {
 	    	tempNode.setId(currentValue);

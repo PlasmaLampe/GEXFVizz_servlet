@@ -167,7 +167,6 @@ public class Servlet extends HttpServlet {
 		}
 	    InputSource inputSource = new InputSource(new StringReader(xml));
 	    xmlReader.setContentHandler(chandler);
-	    
 	    try {
 			xmlReader.parse(inputSource);
 		} catch (IOException e) {
@@ -224,6 +223,9 @@ public class Servlet extends HttpServlet {
 		String eventseriesid = request.getParameter("eventseriesid");
 		String graphtype	= request.getParameter("graphtype");
 		
+		String item	= request.getParameter("item");
+		String snatype	= request.getParameter("snatype");
+		
 		int getNodesAndEdges = -1;
 		if(request.getParameter("getnodesandedges") != null)
 			getNodesAndEdges	= Integer.parseInt(request.getParameter("getnodesandedges"));
@@ -258,7 +260,6 @@ public class Servlet extends HttpServlet {
 			String filepath = server.getGraphPath(graphtype, eventid, eventseriesid, syear, eyear);
 			out.println(filepath);
 		}
-		
 		/* user opened a file */
 		else if(request.getParameter("url") != null && request.getParameter("id") == null){		
 			hashName = hashCodeSHA256(filename);
@@ -268,6 +269,11 @@ public class Servlet extends HttpServlet {
 			hashPath = APACHE_PATH + "hash/"+request.getParameter("id")+".gexf"; 
 		}
 		
+		if(snatype != null && item != null){
+			response.setContentType("text/html");
+			String result = server.getLocalCircos(hashPath, item, snatype);
+			out.println("<html><head></head><body><img src=\""+Settings.ServerURL+result+"\" width=\"800\" height=\"800\"></body></html>");
+		}
 		if((eventid != null || eventseriesid != null) && getBCEdges && rank != -1){
 			String syear	= request.getParameter("syear");
 			String eyear	= request.getParameter("eyear");
@@ -317,7 +323,7 @@ public class Servlet extends HttpServlet {
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else if(eventid == null && eventseriesid == null && circos == false){
+		}else if(eventid == null && eventseriesid == null && circos == false && snatype == null){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
