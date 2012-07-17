@@ -45,7 +45,7 @@ public class Servlet extends HttpServlet {
 			System.setSecurityManager(new RMISecurityManager());
 		} 
     }
-    
+	
     /**
      * This method reads the content of a given file
      * @param path the path to the file
