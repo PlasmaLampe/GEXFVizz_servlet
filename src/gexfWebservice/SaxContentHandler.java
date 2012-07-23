@@ -7,6 +7,13 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
+/**
+ * This class represents help nodes, that are needed
+ * by the sax parser to parse the "all metrics" xml string
+ * 
+ * @author joerg
+ *
+ */
 class SaxNode{
 	private String id;
 	private String label;
@@ -156,6 +163,12 @@ public class SaxContentHandler implements ContentHandler {
 		return result;
 	}
 	
+	/**
+	 * This method uses the sax nodes to print a html table 
+	 * 
+	 * @param upToRank the number of nodes that should be printed within the table
+	 * @return a string that contains the html code
+	 */
 	public String printContent(int upToRank){
 		String output = "<table class=\"zebra-striped\">\n\t<tr><th>name</th><th>standardized value</th><th>value</th></tr>\n";
 		

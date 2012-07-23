@@ -215,6 +215,10 @@ public class Servlet extends HttpServlet {
 		if(request.getParameter("circos") != null)
 			circos	= Boolean.parseBoolean(request.getParameter("circos"));
 		
+		boolean project = false;
+		if(request.getParameter("getproject") != null)
+			project	= Boolean.parseBoolean(request.getParameter("getproject"));
+		
 		boolean getBCEdges = false;
 		if(request.getParameter("bcedges") != null)
 			getBCEdges	= Boolean.parseBoolean(request.getParameter("bcedges"));
@@ -269,6 +273,10 @@ public class Servlet extends HttpServlet {
 			hashPath = APACHE_PATH + "hash/"+request.getParameter("id")+".gexf"; 
 		}
 		
+		if(project != false){
+			String result = server.getPathToProject(hashPath);
+			out.println(result);
+		}
 		if(snatype != null && item != null){
 			response.setContentType("text/html");
 			String result = server.getLocalCircos(hashPath, item, snatype);
@@ -323,7 +331,7 @@ public class Servlet extends HttpServlet {
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else if(eventid == null && eventseriesid == null && circos == false && snatype == null){
+		}else if(eventid == null && eventseriesid == null && circos == false && snatype == null && project == false){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
