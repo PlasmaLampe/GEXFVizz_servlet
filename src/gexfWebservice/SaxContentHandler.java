@@ -170,7 +170,8 @@ public class SaxContentHandler implements ContentHandler {
 	 * @return a string that contains the html code
 	 */
 	public String printContent(int upToRank){
-		String output = "<table class=\"zebra-striped\">\n\t<tr><th>name</th><th>standardized value</th><th>value</th></tr>\n";
+		String id = "" + Math.round((Math.random() * 100) * (Math.random() * 100));
+		String output = "<table class=\"sortable\" id=\"sortabletable"+id+"\">\n\t<tr><th>name</th><th>standardized value</th><th>value</th></tr>\n";
 		
 		for(int i = 0; i < upToRank; i++){
 			double roundedValue = roundTwoD(list.get(i).getValue());
