@@ -20,6 +20,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
@@ -45,7 +46,7 @@ public class Servlet extends HttpServlet {
 			System.setSecurityManager(new RMISecurityManager());
 		} 
     }
-	
+    
     /**
      * This method reads the content of a given file
      * @param path the path to the file
@@ -78,7 +79,7 @@ public class Servlet extends HttpServlet {
      * @param path of the file that should be checked
      * @return the SHA256 hash
      */
-    private String hashCodeSHA256(String path){
+    public String hashCodeSHA256(String path){
     	String content = getContent(path);
     	
     	if(content.equals(lastFileContent)){ // shortcut, maybe we know the output already ;-)
@@ -280,7 +281,10 @@ public class Servlet extends HttpServlet {
 		if(snatype != null && item != null){
 			response.setContentType("text/html");
 			String result = server.getLocalCircos(hashPath, item, snatype);
-			out.println("<html><head></head><body><img src=\""+Settings.ServerURL+result+"\" width=\"800\" height=\"800\"></body></html>");
+			String html = "<html><head></head><body><img src=\""+Settings.ServerURL+result+
+					"\" width=\"800\" height=\"800\"><br><h4>Download the circos configuration files:</h4>" +
+					"<a href=\""+ Settings.ServerURL +"circos/data/"+ request.getParameter("id") +".zip\">download</a></body></html>";
+			out.println(html);
 		}
 		if((eventid != null || eventseriesid != null) && getBCEdges && rank != -1){
 			String syear	= request.getParameter("syear");
