@@ -176,7 +176,7 @@ public class SaxContentHandler implements ContentHandler {
 		for(int i = 0; i < upToRank; i++){
 			double roundedValue = roundTwoD(list.get(i).getValue());
 			String labellink = "<a href=\""+ Settings.TomcatURLToServlet +"id=" + filename + "&item=" +
-					"" + list.get(i).getId() +"&snatype="+ snatype +"\">"+list.get(i).getLabel()+"</a>";
+					"" + list.get(i).getId() +"&metric="+ snatype +"\">"+list.get(i).getLabel()+"</a>";
 			output += "\t<tr><td>"+ labellink +"</td>" +
 					"<td>"+list.get(i).getSvalue()+"</td><td>"+ roundedValue +"</td></tr>\n";
 		}

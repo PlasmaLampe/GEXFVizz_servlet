@@ -229,19 +229,18 @@ public class Servlet extends HttpServlet {
 		String graphtype	= request.getParameter("graphtype");
 		
 		String item	= request.getParameter("item");
-		String snatype	= request.getParameter("snatype");
 		
-		int getNodesAndEdges = -1;
+		boolean getNodesAndEdges = false;
 		if(request.getParameter("getnodesandedges") != null)
-			getNodesAndEdges	= Integer.parseInt(request.getParameter("getnodesandedges"));
+			getNodesAndEdges	= Boolean.parseBoolean(request.getParameter("getnodesandedges"));
 		
-		int getDensity= -1;
+		boolean getDensity = false;
 		if(request.getParameter("getdensity") != null)
-			getDensity	= Integer.parseInt(request.getParameter("getdensity"));
+			getDensity	= Boolean.parseBoolean(request.getParameter("getdensity"));
 		
-		int getSHA= -1;
+		boolean getSHA = false;
 		if(request.getParameter("getsha") != null)
-			getSHA	= Integer.parseInt(request.getParameter("getsha"));
+			getSHA	= Boolean.parseBoolean(request.getParameter("getsha"));
 		
 		/* execute some stuff, if it is a correct request */
 		String hashPath = "";
@@ -278,9 +277,9 @@ public class Servlet extends HttpServlet {
 			String result = server.getPathToProject(hashPath);
 			out.println(result);
 		}
-		if(snatype != null && item != null){
+		if(metric != null && item != null){
 			response.setContentType("text/html");
-			String result = server.getLocalCircos(hashPath, item, snatype);
+			String result = server.getLocalCircos(hashPath, item, metric);
 			String html = "<html><head></head><body><img src=\""+Settings.ServerURL+result+
 					"\" width=\"800\" height=\"800\"><br><h4>Download the circos configuration files:</h4>" +
 					"<a href=\""+ Settings.ServerURL +"circos/data/"+ request.getParameter("id") +".zip\">download</a></body></html>";
@@ -321,21 +320,21 @@ public class Servlet extends HttpServlet {
 				out.println(extractMetric(result, rank, dcc));
 				break;
 			}
-		}else if(getDensity == -1 && getNodesAndEdges != -1 && 
+		}else if(getDensity == false && getNodesAndEdges == true && 
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the #nodes and the #edges of the graph
 			String nodesAndEdges = server.getNodesAndEdges(hashPath);
 			out.println(nodesAndEdges);
-		}else if(getDensity != -1 && getNodesAndEdges == -1 && 
+		}else if(getDensity == true && getNodesAndEdges == false && 
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the density of the graph
 			Double density = server.getDensity(hashPath);
 			out.println(density);
-		}else if(getDensity == -1 && getNodesAndEdges == -1 && getSHA != -1 && 
+		}else if(getDensity == false && getNodesAndEdges == false && getSHA == true && 
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else if(eventid == null && eventseriesid == null && circos == false && snatype == null && project == false){
+		}else if(eventid == null && eventseriesid == null && circos == false && project == false){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
