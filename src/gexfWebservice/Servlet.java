@@ -182,6 +182,7 @@ public class Servlet extends HttpServlet {
     }
     
 	/**
+	 * This method is called every time a user send a request via HTTP 
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -334,7 +335,7 @@ public class Servlet extends HttpServlet {
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else if(eventid == null && eventseriesid == null && circos == false && project == false){
+		}else if(eventid == null && eventseriesid == null && circos == false && project == false && item == null){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
