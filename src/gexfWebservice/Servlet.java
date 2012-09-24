@@ -235,6 +235,10 @@ public class Servlet extends HttpServlet {
 		if(request.getParameter("getnodesandedges") != null)
 			getNodesAndEdges	= Boolean.parseBoolean(request.getParameter("getnodesandedges"));
 		
+		boolean preview = false;
+		if(request.getParameter("preview") != null)
+			preview	= Boolean.parseBoolean(request.getParameter("preview"));
+		
 		boolean getDensity = false;
 		if(request.getParameter("getdensity") != null)
 			getDensity	= Boolean.parseBoolean(request.getParameter("getdensity"));
@@ -243,15 +247,15 @@ public class Servlet extends HttpServlet {
 		if(request.getParameter("getsha") != null)
 			getSHA	= Boolean.parseBoolean(request.getParameter("getsha"));
 		
-		/* execute some stuff, if it is a correct request */
 		String hashPath = "";
 		String hashName = "";
 		
+		/* execute a method, if it is a correct request */
 		/* user is going to create a circos file */
 		if(request.getParameter("url") != null && metric != null && rank != -1 && circos != false){
 			
 			// now, let's start
-			String filepath = server.getCircosPath(filename, metric, rank);
+			String filepath = server.getCircosPath(filename, metric, rank, preview);
 			out.println(filepath);
 		}
 		

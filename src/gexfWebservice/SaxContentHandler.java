@@ -8,7 +8,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
 /**
- * This class represents help nodes, that are needed
+ * This class represents help nodes that are needed
  * by the sax parser to parse the "all metrics" xml string
  * 
  * @author joerg
@@ -72,6 +72,13 @@ class SaxNode{
 	
 }
 
+/**
+ * This class is needed to extract the needed information from
+ * the "allmetrics" XML file
+ * 
+ * @author joerg
+ *
+ */
 public class SaxContentHandler implements ContentHandler {
 	protected String snatype;
 	protected String filename;
@@ -186,6 +193,13 @@ public class SaxContentHandler implements ContentHandler {
 	}
 }
 
+/**
+ *  This class is needed to extract the "closeness centrality" information from
+ * the "allmetrics" XML file
+ * 
+ * @author joerg
+ *
+ */
 class ClosenessCentralityContentHandler extends SaxContentHandler{
 	
 	public ClosenessCentralityContentHandler(){
@@ -239,6 +253,13 @@ class ClosenessCentralityContentHandler extends SaxContentHandler{
 	}
 }
 
+/**
+ *  This class is needed to extract the "betweenness centrality" information from
+ * the "allmetrics" XML file
+ * 
+ * @author joerg
+ *
+ */
 class BetweennessCentralityContentHandler extends SaxContentHandler{
 	
 	public BetweennessCentralityContentHandler(){
@@ -291,6 +312,13 @@ class BetweennessCentralityContentHandler extends SaxContentHandler{
 	}
 }
 
+/**
+ * This class is needed to extract the "degree centrality" information from
+ * the "allmetrics" XML file
+ * 
+ * @author joerg
+ *
+ */
 class DegreeCentralityContentHandler extends SaxContentHandler{
 	
 	public DegreeCentralityContentHandler() {
