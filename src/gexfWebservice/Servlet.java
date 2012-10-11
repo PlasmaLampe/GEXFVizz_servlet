@@ -197,7 +197,6 @@ public class Servlet extends HttpServlet {
 				return;
 			}
 		} catch (NotBoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -225,7 +224,6 @@ public class Servlet extends HttpServlet {
 		if(request.getParameter("bcedges") != null)
 			getBCEdges	= Boolean.parseBoolean(request.getParameter("bcedges"));
 		
-		String eventid	= request.getParameter("eventid");
 		String eventseriesid = request.getParameter("eventseriesid");
 		String graphtype	= request.getParameter("graphtype");
 		
@@ -260,13 +258,13 @@ public class Servlet extends HttpServlet {
 		}
 		
 		/* user is going to create a gexf file */
-		else if((eventid != null || eventseriesid != null) && graphtype != null && circos == false){
+		else if(eventseriesid != null && graphtype != null && circos == false){
 			// load the other parameter 
 			String syear	= request.getParameter("syear");
 			String eyear	= request.getParameter("eyear");
 			
 			// now, let's start
-			String filepath = server.getGraphPath(graphtype, eventid, eventseriesid, syear, eyear);
+			String filepath = server.getGraphPath(graphtype, eventseriesid, syear, eyear);
 			out.println(filepath);
 		}
 		/* user opened a file */
@@ -290,10 +288,10 @@ public class Servlet extends HttpServlet {
 					"<a href=\""+ Settings.ServerURL +"circos/data/"+ request.getParameter("id") +".zip\">download</a></body></html>";
 			out.println(html);
 		}
-		if((eventid != null || eventseriesid != null) && getBCEdges && rank != -1){
+		if(eventseriesid != null && getBCEdges && rank != -1){
 			String syear	= request.getParameter("syear");
 			String eyear	= request.getParameter("eyear");
-			String result = server.getBCEdges(eventid, eventseriesid, syear, eyear, rank);	// ask the server for the needed XML code
+			String result = server.getBCEdges(eventseriesid, syear, eyear, rank);	// ask the server for the needed XML code
 			out.println(result);
 		}
 		else if(rank != -1 && metric != null && circos == false && 
@@ -339,7 +337,7 @@ public class Servlet extends HttpServlet {
 				(request.getParameter("url") != null || request.getParameter("id") != null)){
 			// get the SHA hash of the graph-file
 			out.println(hashName);
-		}else if(eventid == null && eventseriesid == null && circos == false && project == false && item == null){
+		}else if(eventseriesid == null && circos == false && project == false && item == null){
 			// ERROR, this was not a valid request ...
 			response.setContentType("text/html");
 			out.println("<html><head></head><body><h2>GEXFVizz error:</h2> please specify an url...<br>" +
@@ -347,5 +345,8 @@ public class Servlet extends HttpServlet {
 					"or use some of these variables:getnodesandedges, getdensity, getsha..." +
 					"</body></html>");
 		}
+		
+		/* cleanup */
+		out.close();
 	}
 }
