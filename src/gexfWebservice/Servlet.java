@@ -45,6 +45,8 @@ public class Servlet extends HttpServlet {
 		if (System.getSecurityManager() == null) {
 			System.setSecurityManager(new RMISecurityManager());
 		} 
+		
+		initParameter();
     }
     
     /**
@@ -348,5 +350,36 @@ public class Servlet extends HttpServlet {
 		
 		/* cleanup */
 		out.close();
+	}
+	
+	/**
+	 * This method initializes the global methods of the
+	 * application with the help of the settings.txt file
+	 */
+	private void initParameter(){
+    	File tempfile = new File(Settings.CFG_FILE);
+
+    	try {
+    		BufferedReader input =  new BufferedReader(new FileReader(tempfile));
+    		try {
+    			String line = null; 
+    			while (( line = input.readLine()) != null){
+    				String token[] =  line.split("=");
+    				
+    				switch(token[0].replaceAll("\t", "").trim()){
+    				case "TomcatURLToServlet":
+    					Settings.TomcatURLToServlet = token[1];
+    					break;
+    				case "ServerURL":
+    					Settings.ServerURL = token[1];
+    					break;		
+    				}
+    			}
+    		}finally {
+    			input.close();
+    		}
+    	}catch (Exception e){
+    		e.printStackTrace();
+    	}
 	}
 }
